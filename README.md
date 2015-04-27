@@ -1,22 +1,30 @@
 VMWare Environment
 
-Test was conducted on VMWare esXI 5.5
-CPUS = 1 Core
-RAM = 2GB
+1. Test was conducted on VMWare esXI 5.5
+ 1. CPUS = 1 Core
+ 1. RAM = 2GB
 HDD = 100GB
 HostName = openmbee.db8tnet
-Download CentOS 6.6 for x64
-Install Desktop Environment
-Add a User to sudo
-become root
+1. Download CentOS 6.6 for x64
+1. Install Desktop Environment
+1. Add a User to sudo
+ 1. become root
+ ```
 su - root
-<enter root pw>
-Open Terminal
-Switch to root user # su (enter password)
+```
+
+ 1. <enter root pw>
+ 1. Open Terminal
+ 1. Switch to root user # su (enter password)
+
+```
 # visudo (it is vi editor editing file mentioned in the post, so basic vi skills required here)
-in visudo find lines:
+```
+ . in visudo find lines:
+```
 ## Allows people in group wheel to run all commands
 %wheel ALL=(ALL) ALL
+```
 remove # from 2nd line
 save changes and quit (:wq)
 now add the user to the wheel group:
