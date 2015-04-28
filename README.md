@@ -288,6 +288,8 @@ sudo chmod -R +r /opt/local/eclipse
 5. in terminal navigate to git directory for repo
 
     ```
+    cd ${userhome}/git/${repo}
+    mkdir bin
     ant
     ```
  
