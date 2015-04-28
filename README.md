@@ -285,7 +285,8 @@ sudo chmod -R +r /opt/local/eclipse
     ```
     <copy todir="${view_repo_amp_lib}" file="mbee_util.jar" failonerror="false”/>
     ```
-5. in terminal navigate to git directory for repo
+5. in ```<jar destfile="{repo}.jar">``` add ```basedir="${gitDir}/{repo}/src"```
+6. in terminal navigate to git directory for repo
 
     ```
     cd ${userhome}/git/${repo}
@@ -297,6 +298,21 @@ sudo chmod -R +r /opt/local/eclipse
 2. Next build docbook
  1. navigate to the docbook git directory ```mvn package```
  2. Copy the file to EMS-Repo/lib ```cp docbook.jar```
+ 3. Open Eclipse
+ 4. In Java Perspective navigate to the EMS-Repo repostiory
+ 5. Open pom.xml and click the pom.xml tab
+ 6. Around line 95 replace the docbook dependency info with the following
+ 
+     ```
+     <dependency>
+	        		<groupId>docbook</groupId>
+	        		<artifactId>docbook</artifactId>
+	        		<version>0.0.1</version>
+                    <scope>system</scope>
+	            	<type>jar</type>
+	            	<systemPath>${project.basedir}/lib/docbook.jar</systemPath>
+            </dependency>
+    ```
 
 #### Build EMS
 1. There are three parts to EMS
