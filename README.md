@@ -190,7 +190,7 @@ sudo chmod -R +r /opt/eclipse
     ```
  1. Paste the following content into the file
     ```
-    export ECLIPSE_HOME=“/opt/eclipse”
+    export ECLIPSE_HOME=/opt/eclipse
     $ECLIPSE_HOME/eclipse $*
     ```
 7. Create the following file 
