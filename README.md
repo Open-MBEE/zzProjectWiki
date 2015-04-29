@@ -166,7 +166,7 @@ HostName = openmbee.db8tnet
 1. Download Installer
 
     ```
-    wget http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR2/eclipse-java-luna-SR2-linux-gtk-x86_64.tar.gz&r=1
+    wget http://mirror.cc.columbia.edu/pub/software/eclipse/technology/epp/downloads/release/luna/SR2/eclipse-java-luna-SR2-linux-gtk-x86_64.tar.gz
     ```
 2. Expand Archive and copy to opt
 
@@ -176,7 +176,7 @@ HostName = openmbee.db8tnet
 3. Change Directories ```cd /opt```
 4. Fix permissions
     ```
-sudo chmod -R +r /opt/local/eclipse
+sudo chmod -R +r /opt/eclipse
     ```
 5. Create a config file and set its permissions
     ```
