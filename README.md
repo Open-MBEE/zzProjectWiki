@@ -268,51 +268,52 @@ sudo chmod -R +r /opt/eclipse
 6. Allow maven dependencies to update (may take some time)
 
 #### Build .Jar files
-1. For each repo bae/sysml/util:
- 1. open each build.xml and replace gitDir definition with
+1. For each repo in order util/sysml/docbook:
+ 1. Open Terminal
+ 2. Change to git directory ```cd /home/${user.name}``` changing ```${user.name}``` to your username
+ 3. Build the JAR ```mvn package```
+ 4. Next, add the newly created JAR to your local maven repo replacing ```${repo.name}``` with the repository you are working with
  
+     ``` 
+    mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
-    <property name="gitDir" location="..”/>
-    ```
- 2. rename view_repo_lib property to view_repo_amp_lib
- 3. add a new property
-
+    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.1```
+    
+ 5. Repeat for other repos
+2. Next build BAE
+ 1. Open Eclipse
+ 2. In JAVA Perspective open the BAE project
+ 3. Open pom.xml
+ 4. After Line 20 ```<repositories>``` delete all content within the tag
+ 5. Insert the following between the newly empty tags
      ```
-    <property name="view_repo_lib" value="${view_repo}/lib”/>
+     <repository>
+      <id>local-repository</id>
+      <name>local</name>
+      <url>file://${user.home}/.m2/repository</url>
+      </repository>
+      ```
+      This tells maven to look only at your local repository rather than the JPL internal maven repo
+  6. Look for the ```<dependencies>``` tag
+  7. Insert the following new dependency
+  
     ```
- 4. after ```<copy todir=“${view_repo_lib}….``` add
-
-    ```
-    <copy todir="${view_repo_amp_lib}" file="mbee_util.jar" failonerror="false”/>
-    ```
-5. in ```<jar destfile="{repo}.jar">``` add ```basedir="${gitDir}/{repo}/src"```
-6. in terminal navigate to git directory for repo
-
-    ```
-    cd ${userhome}/git/${repo}
-    mkdir bin
-    ant
+      <dependency>
+    	<groupID>junit</groupID>
+    	<artifactID>junit</artifactID>
+    	<version>4.12</version>
+    </dependency>
     ```
  
- 6. repeat
-2. Next build docbook
- 1. navigate to the docbook git directory ```mvn package```
- 2. Copy the file to EMS-Repo/lib ```cp docbook.jar```
- 3. Open Eclipse
- 4. In Java Perspective navigate to the EMS-Repo repostiory
- 5. Open pom.xml and click the pom.xml tab
- 6. Around line 95 replace the docbook dependency info with the following
- 
-     ```
-     <dependency>
-	        		<groupId>docbook</groupId>
-	        		<artifactId>docbook</artifactId>
-	        		<version>0.0.1</version>
-                    <scope>system</scope>
-	            	<type>jar</type>
-	            	<systemPath>${project.basedir}/lib/docbook.jar</systemPath>
-            </dependency>
+  7. Save and close the file
+  7. Open the terminal again
+  8. Change directories to the BAE repository ```${user.home}/git/bae```
+  9. Build the JAR ```mvn package```
+  10. Install the JAR to the local repository
     ```
+    mvn install:install-file -Dfile=target/bae-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.bae -DartifactId=bae -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
+    ```
+    
 
 #### Build EMS
 1. There are three parts to EMS
