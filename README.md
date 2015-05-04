@@ -216,7 +216,54 @@ sudo chmod -R +r /opt/eclipse
 9. Start Eclipse
  1. Terminal ```eclipse```
  2. GUI, click Applications > Programming > Eclipse
+
+###Installing EMS Webapp Applications development environment
  
+#### Install node.js
+1. Install centos development tools for building and running EMS-Webapp
+
+    ```
+    sudo yum -y groupinstall "Development Tools"
+    ```
+
+2. Become root ```sudo -i```
+3. As root, install rpm repository for Node.js
+
+    ```
+    curl -sL https://rpm.nodesource.com/setup | bash -
+    ```
+
+4. Again as root, install Node.js
+
+    ```
+    yum install -y nodejs
+    ```
+
+5. logout root ```logout```
+
+#### Install Ruby
+1. Install package
+
+    ```
+    sudo yum install -y ruby
+    ```
+    
+2. Install ruby gems
+
+    ```
+    sudo yum install -y rubygems
+    ```
+
+#### Install grunt
+1. install grunt-cli ```npm install -g grunt-cli```
+
+#### Install bower
+1. ```npm install -g bower```
+
+#### Install sass
+1. ```gem install sass```
+
+
 ### Install Alfresco
 1. Download Alfresco 4.2e/f
     ```
@@ -344,7 +391,10 @@ sudo chmod -R +r /opt/eclipse
     ```
 
 ##### Build the EVM.zip
-1. See instructions in the EMS-Webapp Repo
+1. You must first have installed all the dependencies in the EMS-Webapp Applications development environment above
+2. Navigate to the correct directory ```cd ${git.dir}/EMS-Webapp```
+3. Install additional dependencies ```npm install``` which will look at the directory's package.json file
+4. 
 2. Test locally Grunt server:localhost (port 9000)
 
 #### Deploying to production Alfresco
@@ -357,22 +407,31 @@ sudo chmod -R +r /opt/eclipse
     java -jar $ALFRESCO/bin/alfresco-mmt.jar uninstall mms-share share.war
     ```
 3. Install the amps
- 4. cd $TOMCAT/webapps
+ 4. cd /opt/alfresco-${alfresco.version}
     ```
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar install $PATH_TO_AMP/mms-repo.amp $TOMCAT/alfresco.war -force
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar install $PATH_TO_AMP/mms-share.amp $TOMCAT/share.war -force
+    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir} /EMS-Repo/target/mms-repo.amp ./tomcat/webapps/alfresco.war -force
+    sudo java -jar $ALFRESCO/bin/alfresco-mmt.jar install $PATH_TO_AMP/mms-share.amp $TOMCAT/share.war -force
     ```
 4. Explode the WAR
  4. ```cd $TOMCAT/webapps```
- 5. ```rm -rf alfresco```
- 6. ```mkdir alfresco```
- 7. ```cd alfresco```
- 8. ```jar xvf ../alfresco.war```
+ 5. ```sudo rm -rf alfresco```
+ 6. ```sudo mkdir alfresco```
+ 7. ```cd ./alfresco```
+ 8. ```sudo jar xvf ../alfresco.war```
 5. Unzip EVM ```unzip evm.zip```
- 1. ```mv build mmsapp```
+ 1. ```cp ${git.dir}/EMS-Webapp/build mmsapp```
 2. ```cd $TOMCAT/webapps```
 3. ```chown -R tomcat:tomcat webapps```
 
-#### MDK
+### Server Configuration
+
+#### Basics
+1. Check your ports depending on your configuration you might want (80,443,
+2. Ensure alfresco and httpd are running at startup ```sudo chkconfig alfresco on```; ```sudo chkconfig httpd on```
+3. 
+
+
+
+### MDK
 1. TBD
 2. there’s a class called qvt script runner or something similar, if you delete that and delete any broken calls to it it should compile with md without nick’s stuff
