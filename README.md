@@ -1,4 +1,4 @@
-#Warning these instructions are still in testing and may not be complete
+#Warning these instructions are only tested for EMS Version 2.0 (Commits prior to May 4th 2015)
 
 # Install OpenMBEE Environment from Source
 
