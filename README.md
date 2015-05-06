@@ -1,4 +1,4 @@
-#Warning these instructions are only tested for EMS Version 2.0 (Commits prior to May 4th 2015)
+#These instructions are now up to date for EMS Version 2.1 (Commits afrer to May 4th 2015)
 
 # Install OpenMBEE Environment from Source
 
@@ -296,6 +296,7 @@ sudo chmod -R +r /opt/eclipse
 10. Test using internal and external browsers!
 
 ### Build OpenMBEE Source Code
+Follow these instructions to update or install EMS from source
 
 #### Get Repositories
 1. Open GUI interface
@@ -310,12 +311,19 @@ sudo chmod -R +r /opt/eclipse
  3. bae : https://github.com/Open-MBEE/bae.git
  4. sysml : https://github.com/Open-MBEE/sysml.git
  5. docbook : https://github.com/Open-MBEE/docbook.git
-4. uncheck build automatically
+5. uncheck build automatically
 5. download these repos using eclipse
+6. make sure to checkout the '2.1' Branch
 6. Allow maven dependencies to update (may take some time)
 
+#### Stop Alfresco
+1. If you have an alfresco instance running you can stop it now
+2. ```cd /opt/alfresco-{alf.version}```
+3. ```sudo ./alfresco.sh stop```
+4. If you installed alfresco as a service and dont have port 8005 open internally you may get an error message and fail to stop the server if you attempt ```sudo service alfresco stop```
+
 #### Build .Jar files
-1. For each repo in order util/sysml/docbook:
+1. For each repo *in order* mbee_util/sysml/docbook/bae:
  1. Open Terminal
  2. Change to git directory ```cd /home/${user.name}``` changing ```${user.name}``` to your username
  3. Build the JAR ```mvn package```
@@ -325,41 +333,9 @@ sudo chmod -R +r /opt/eclipse
     mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
     Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.1```
+    Note: For util use ```mbee_util``` for Dfile and DartifactId but only ```util``` for DgroupId
     
- 5. Repeat for other repos
-2. Next build BAE
- 1. Open Eclipse
- 2. In JAVA Perspective open the BAE project
- 3. Open pom.xml
- 4. After Line 20 ```<repositories>``` delete all content within the tag
- 5. Insert the following between the newly empty tags
-     ```
-     <repository>
-      <id>local-repository</id>
-      <name>local</name>
-      <url>file://${user.home}/.m2/repository</url>
-      </repository>
-      ```
-      This tells maven to look only at your local repository rather than the JPL internal maven repo
-  6. Look for the ```<dependencies>``` tag
-  7. Insert the following new dependency
-  
-    ```
-      <dependency>
-    	<groupID>junit</groupID>
-    	<artifactID>junit</artifactID>
-    	<version>4.12</version>
-    </dependency>
-    ```
- 
-  7. Save and close the file
-  7. Open the terminal again
-  8. Change directories to the BAE repository ```${user.home}/git/bae```
-  9. Build the JAR ```mvn package```
-  10. Install the JAR to the local repository
-    ```
-    mvn install:install-file -Dfile=target/bae-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.bae -DartifactId=bae -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
-    ```
+ 5. Repeat for other repos before building bae
     
 
 #### Build EMS
