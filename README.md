@@ -66,17 +66,17 @@ HostName = openmbee.db8tnet
     ```
     
  6. Configure Default gateway and hostname
+ 
     ```
     vim /etc/sysconfig/network
     ```
     
- 6. Run DHClient
+ 6. OPTIONAL: Configure local dns lookups if desired ```sudo vim /etc/resolv.conf```
+ 
     ```
-    sudo dhclient
+    search <yourdomain>
+    nameserver <your dns/dhcp server>
     ```
-    
- 7. Restart machine
-1. in desktop click on network manager to ensure the connection is active
 
 #### Enable SSH
 2. Open terminal
