@@ -56,10 +56,16 @@ HostName = openmbee.db8tnet
  4. Add the following
  
     ```
+    DEVICE=eth0
+    HWADDR=<mac number>
+    TYPE=Ethernet
+    NM_CONTROLLED=no
+    ONBOOT=yes
     IPADDR=<your ip>
     NETMASK=255.255.255.0
     ```
- 5. Configure Default gateway
+    
+ 6. Configure Default gateway and hostname
     ```
     vim /etc/sysconfig/network
     ```
@@ -332,7 +338,7 @@ Follow these instructions to update or install EMS from source
      ``` 
     mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
-    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.1```
+    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.5```
     Note: For util use ```mbee_util``` for Dfile and DartifactId but only ```util``` for DgroupId
     
  5. Repeat for other repos before building bae
@@ -370,37 +376,67 @@ Follow these instructions to update or install EMS from source
 1. You must first have installed all the dependencies in the EMS-Webapp Applications development environment above
 2. Navigate to the correct directory ```cd ${git.dir}/EMS-Webapp```
 3. Install additional dependencies ```npm install``` which will look at the directory's package.json file
-4. 
-2. Test locally Grunt server:localhost (port 9000)
+4. Execute the build ```grunt```
+5. If you get an error like this:
+    ```
+    Unable to find a suitable version for angular, please choose one:
+    1) angular#1.2.28 which resolved to 1.2.28 and is required by angular-animate#1.2.28 
+    2) angular#~1.2.x which resolved to 1.2.28 and is required by angular-ui-sortable#0.12.11 
+    3) angular#~1.3.8 which resolved to 1.3.15 and is required by mms 
+    4) angular#>= 1.0.8 which resolved to 1.3.15 and is required by angular-ui-router#0.2.14 
+    5) angular#>=1 which resolved to 1.3.15 and is required by angular-ui-bootstrap-bower#0.11.2 
+    6) angular#>= 1.2.0 which resolved to 1.3.15 and is required by angular-ui-tree#2.1.5 
+    7) angular#>=1.2.1 which resolved to 1.3.15 and is required by angular-growl-v2#0.6.1 
+    8) angular#>=1.2.x which resolved to 1.3.15 and is required by angular-ui-sortable#0.13.3 
+    9) angular#1.3.15 which resolved to 1.3.15 and is required by angular-animate#1.3.15Prefix the choice with ! to persist it to bower.json
+    ```
+    Select an option that resolves to 1.3.15 (3-9)
+
+6. If you want to test locally Grunt server:localhost (port 9000)
 
 #### Deploying to production Alfresco
 
 1. Uninstall any existing, Navigate to /{alfresco.dir}/bin/
- 2. cd $TOMCAT/webapps
+ 2. cd /opt/alfresco-${alfresco.version}
 
     ```
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar uninstall mms-repo alfresco.war
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar uninstall mms-share share.war
+    sudo java -jar ./bin/alfresco-mmt.jar uninstall mms-repo ./tomcat/webapps/alfresco.war
+    sudo java -jar ./bin/alfresco-mmt.jar uninstall mms-share ./tomcat/webapps/share.war
     ```
 3. Install the amps
  4. cd /opt/alfresco-${alfresco.version}
     ```
-    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir} /EMS-Repo/target/mms-repo.amp ./tomcat/webapps/alfresco.war -force
-    sudo java -jar $ALFRESCO/bin/alfresco-mmt.jar install $PATH_TO_AMP/mms-share.amp $TOMCAT/share.war -force
+    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir}/EMS-Repo/target/mms-repo.amp ./tomcat/webapps/alfresco.war -force
+    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir}/EMS-Share/target/mms-share.amp ./tomcat/webapps/share.war -force
     ```
-4. Explode the WAR
+4. Explode the Alfresco WAR
  4. ```cd $TOMCAT/webapps```
  5. ```sudo rm -rf alfresco```
  6. ```sudo mkdir alfresco```
  7. ```cd ./alfresco```
  8. ```sudo jar xvf ../alfresco.war```
+5. Explode the Share WAR
+ 4. ```cd $TOMCAT/webapps```
+ 5. ```sudo rm -rf share```
+ 6. ```sudo mkdir share```
+ 7. ```cd ./share```
+ 8. ```sudo jar xvf ../share.war```
 5. Unzip EVM ```unzip evm.zip```
- 1. ```cp ${git.dir}/EMS-Webapp/build mmsapp```
+ 1. ```cp -r ${git.dir}/EMS-Webapp/build mmsapp```
 2. ```cd $TOMCAT/webapps```
 3. ```chown -R tomcat:tomcat webapps```
+6. Remove Extra Solr files
+ 1. ```sudo rm -rf ${tomcat.dir}/conf/Catalina/localhost/solr.xml```
+ 2. ```sudo rm -rf ${tomcat.dir}/work```
+7. Copy Docbookgen
+ 1. ```sudo cp -r {$git.dir}/docbookgen docbookgen```
+ 2. ```cd docbookgen```
+ 3. 
 
 ### Server Configuration
 
+1. Start the Server
+2. 
 #### Basics
 1. Check your ports depending on your configuration you might want (80,443,
 2. Ensure alfresco and httpd are running at startup ```sudo chkconfig alfresco on```; ```sudo chkconfig httpd on```
