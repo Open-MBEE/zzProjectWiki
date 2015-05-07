@@ -299,7 +299,10 @@ sudo chmod -R +r /opt/eclipse
      HTTP 80 and 443 (redirect these to /share/page)
      Postgresql 5432
      
-10. Test using internal and external browsers!
+10. set catalina home
+    ```
+    ```
+11. Test using internal and external browsers!
 
 ### Build OpenMBEE Source Code
 Follow these instructions to update or install EMS from source
@@ -434,9 +437,18 @@ Follow these instructions to update or install EMS from source
  3. 
 
 ### Server Configuration
+1. Modify the global properties file to support lucine searching
+2. ```sudo vim ${tomcat.home}/shared/classes/alfresco-global.properties```
+3. Edit the file to include
 
-1. Start the Server
-2. 
+    ```
+    ### Lucene Settings ###
+    index.subsystem.name=lucene
+    index.recovery.mode = AUTO
+    index.tracking.disableInTransactionIndexing = false
+    ```
+
+4. If you see a section called ```### Solr Settings ###``` comment each setting out by placing a ```#``` in front of each line
 #### Basics
 1. Check your ports depending on your configuration you might want (80,443,
 2. Ensure alfresco and httpd are running at startup ```sudo chkconfig alfresco on```; ```sudo chkconfig httpd on```
