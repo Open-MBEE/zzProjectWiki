@@ -2,13 +2,10 @@
 
 # Install OpenMBEE Environment from Source
 
-1. Test was conducted on VMWare esXI 5.5
- 1. CPUS = 1 Core
- 1. RAM = 2GB
-HDD = 100GB
+1. Test was conducted on VMWare esXI 5.0 (CentOS 6) and Amazon AWS (CentOS 7)
 HostName = openmbee.db8tnet
 
-## Procedure
+## Optional Setup Procedure
 
 ### Install OS
 1. Download CentOS 6.6 for x64
@@ -88,7 +85,7 @@ HostName = openmbee.db8tnet
     sudo shutdown -r now
     ```
 
-#### Setup VNC
+#### Setup VNC (Optional only if you plan to use eclipse)
 1. Install TigerVNC
     ```
     sudo yum install vnc-server
@@ -107,6 +104,12 @@ HostName = openmbee.db8tnet
 5. Test using your favorite VNC viewer (RealVNC, chicken of the VNC etc)
 
 ### Install Development Environment
+
+#### Install Support tools
+
+1. Install vim (or your favorite text editor) ```sudo yum install vim```
+2. Install wget ```sudo yum install wget```
+
 #### Install JAVA
 1. Download and Install
 
@@ -120,7 +123,7 @@ HostName = openmbee.db8tnet
     ```$ sudo vim /etc/profile.d/java.sh```
  1. Insert the following:
     ```
-    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
+    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk
     export PATH=$PATH:$JAVA_HOME
     ```
 
@@ -152,7 +155,7 @@ HostName = openmbee.db8tnet
 6. Finally, log out and log in again to activate the above environment variables.
 7. To verify successful installation of maven, check the version of maven: ```$ mvn -version ```
 
-#### Install Ant
+#### Install Ant (Not required)
 1. Setup
     ```
     wget http://www.gtlib.gatech.edu/pub/apache//ant/binaries/apache-ant-1.9.4-bin.tar.gz
@@ -168,7 +171,7 @@ HostName = openmbee.db8tnet
     export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:${PATH}.
     ```
 
-#### Install Eclipse
+#### Install Eclipse (Optional only if you prefer a gui git/coding environment)
 1. Download Installer
 
     ```
