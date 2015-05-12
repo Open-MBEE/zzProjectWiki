@@ -297,15 +297,61 @@ sudo chmod -R +r /opt/eclipse
     -A INPUT -p tcp -m tcp —dport 8080 -j ACCEPT
     -A INPUT -p tcp -m tcp —dport 8443 -j ACCEPT
     ```
- 2 . Other useful ports
- 
-     HTTP 80 and 443 (redirect these to /share/page)
-     Postgresql 5432
-     
-10. set catalina home
-    ```
-    ```
 11. Test using internal and external browsers!
+
+### Configure httpd
+1. Install httpd ``sudo yum install httpd```
+2. Open httpd ports
+    ```
+    -A INPUT -p tcp -m tcp —dport 80 -j ACCEPT
+    -A INPUT -p tcp -m tcp —dport 443 -j ACCEPT
+    ```
+3. Configure httpd for virtual host and enable mod_proxy services ```sudo vim /etc/httpd/conf/httpd.conf```
+4. Append to the end of the file:
+
+    ```
+    #
+    # Use name-based virtual hosting
+    #
+    NameVirtualHost *:80
+    #
+    # NOTE: NameVirtualHost cannot be used without a port specifier
+    # (e.g. :80) if mod_ssl is being used, due to the nature of the
+    # SSL protocol.
+    #
+    LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+    ```
+5. Clean up apache and configure the virtual host
+
+    ```
+    cd /etc/httpd/conf.d/
+    sudo rm welcome.conf
+    sudo vim tomcat.conf
+    ```
+6. Insert into tomcat.conf
+
+    ```
+    <VirtualHost *:80>
+       ServerName <yourdomain openmbee.domain>
+       ServerAlias <yourfulldomain i.e. www.openmbee.com>
+
+       ProxyRequests Off
+       ProxyPreserveHost On
+
+       ErrorLog /var/log/httpd/tomcat.error.log
+       CustomLog /var/log/httpd/tomcat.log combined
+
+       <Proxy *>
+               Order deny,allow
+               Allow from all
+       </Proxy>
+
+       ProxyPass / ajp://localhost:8009/
+       ProxyPassReverse / ajp://localhost:8009/
+    </VirtualHost>
+    ```
+7. Restart httpd ```sudo service httpd restart```
+8. Test using browser
 
 ### Build OpenMBEE Source Code
 Follow these instructions to update or install EMS from source
