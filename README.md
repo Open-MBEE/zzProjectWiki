@@ -82,7 +82,7 @@ HostName = openmbee.db8tnet
     sudo shutdown -r now
     ```
 
-#### Setup VNC
+#### Setup VNC (OPTIONAL)
 1. Install TigerVNC
     ```
     sudo yum install vnc-server
@@ -101,6 +101,12 @@ HostName = openmbee.db8tnet
 5. Test using your favorite VNC viewer (RealVNC, chicken of the VNC etc)
 
 ### Install Development Environment
+#### Install Support Pgms
+1. These may already be installed depending on the version and deployment of CentOS used
+2. Install vim (or your favorite text editor) ```sudo yum install vim```
+3. Install wget ```sudo yum install wget```
+4. 
+
 #### Install JAVA
 1. Download and Install
 
@@ -146,7 +152,7 @@ HostName = openmbee.db8tnet
 6. Finally, log out and log in again to activate the above environment variables.
 7. To verify successful installation of maven, check the version of maven: ```$ mvn -version ```
 
-#### Install Ant
+#### Install Ant (Not Required)
 1. Setup
     ```
     wget http://www.gtlib.gatech.edu/pub/apache//ant/binaries/apache-ant-1.9.4-bin.tar.gz
@@ -162,7 +168,7 @@ HostName = openmbee.db8tnet
     export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:${PATH}.
     ```
 
-#### Install Eclipse
+#### Install Eclipse (Optional only if you prefer a gui git/coding interface)
 1. Download Installer
 
     ```
