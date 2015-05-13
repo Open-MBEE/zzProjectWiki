@@ -357,6 +357,7 @@ sudo chmod -R +r /opt/eclipse
 Follow these instructions to update or install EMS from source
 
 #### Get Repositories
+##### Gui Instructions
 1. Open GUI interface
 2. open eclipse in git perspective
 3. open browser and get git links from (http://openmbee.org)
@@ -373,7 +374,23 @@ Follow these instructions to update or install EMS from source
 5. download these repos using eclipse
 6. make sure to checkout the '2.1' Branch
 6. Allow maven dependencies to update (may take some time)
+##### Command line only instructions
+1. ```cd /home/${user.name}```
+2. ```mkdir ./git```
+3. ```cd ${user.home}/git```
+4. Clone repos
 
+    ```
+    git clone https://${git.username}@github.com/Open-MBEE/util.git
+    git clone https://${git.username}@github.com/Open-MBEE/sysml.git
+    git clone https://${git.username}@github.com/Open-MBEE/bae.git
+    git clone https://${git.username}@github.com/Open-MBEE/docbook.git
+    git clone https://${git.username}@github.com/Open-MBEE/docbookgen.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Repo.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Share.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Webapp.git
+    ```
+    
 #### Stop Alfresco
 1. If you have an alfresco instance running you can stop it now
 2. ```cd /opt/alfresco-{alf.version}```
@@ -382,9 +399,10 @@ Follow these instructions to update or install EMS from source
 
 #### Build .Jar files
 1. For each repo *in order* mbee_util/sysml/docbook/bae:
- 1. Open Terminal
- 2. Change to git directory ```cd /home/${user.name}``` changing ```${user.name}``` to your username
- 3. Build the JAR ```mvn package```
+ 1. Open Terminal (gui only)
+ 2. Change to git directory ```cd /home/${user.name}/git/${repo.name}``` changing ```${user.name}``` to your username
+ 3. Ensure you are on the correct branch (2.1) ```git status``` if not ```git checkout 2.1```
+ 4. Build the JAR ```mvn package```
  4. Next, add the newly created JAR to your local maven repo replacing ```${repo.name}``` with the repository you are working with
  
      ``` 
@@ -407,7 +425,7 @@ Follow these instructions to update or install EMS from source
 
 ##### Build the EMS-Repo AMP
 1. In terminal navigate to EMS-Repo in git directory
-2. Build the amp ```mvn package -P mbee-dev```
+2. Build the amp ```mvn package -P mbee-dev -Dmaven.test.skip=true```
 3. If you want to run a local instance in an embedded jetty container (Repo on port  localhost:8080)
 
     ```
@@ -473,7 +491,7 @@ Follow these instructions to update or install EMS from source
  6. ```sudo mkdir share```
  7. ```cd ./share```
  8. ```sudo jar xvf ../share.war```
-5. Unzip EVM ```unzip evm.zip```
+5. Copy EVM ```cd ../alfresco```
  1. ```cp -r ${git.dir}/EMS-Webapp/build mmsapp```
 2. ```cd $TOMCAT/webapps```
 3. ```chown -R tomcat:tomcat webapps```
@@ -481,7 +499,7 @@ Follow these instructions to update or install EMS from source
  1. ```sudo rm -rf ${tomcat.dir}/conf/Catalina/localhost/solr.xml```
  2. ```sudo rm -rf ${tomcat.dir}/work```
 7. Copy Docbookgen
- 1. ```sudo cp -r {$git.dir}/docbookgen docbookgen```
+ 1. ```sudo cp -r {$git.dir}/docbookgen /opt/docbookgen```
  2. ```cd docbookgen```
  3. 
 
@@ -498,11 +516,6 @@ Follow these instructions to update or install EMS from source
     ```
 
 4. If you see a section called ```### Solr Settings ###``` comment each setting out by placing a ```#``` in front of each line
-#### Basics
-1. Check your ports depending on your configuration you might want (80,443,
-2. Ensure alfresco and httpd are running at startup ```sudo chkconfig alfresco on```; ```sudo chkconfig httpd on```
-3. 
-
 
 
 ### MDK
