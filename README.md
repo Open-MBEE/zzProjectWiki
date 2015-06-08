@@ -359,7 +359,7 @@ sudo chmod -R +r /opt/eclipse
     mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
     Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.5```
-          Repo names: ```mbee_util```, ```sysml```, ```bae```
+          Repo names: ```mbee_util```, ```sysml```, ```docbook```
 
  5. Repeat for other repos
 2. Next build BAE
