@@ -517,7 +517,68 @@ Follow these instructions to update or install EMS from source
 
 4. If you see a section called ```### Solr Settings ###``` comment each setting out by placing a ```#``` in front of each line
 
+### SSL
+	1.	Install OpenSSL and OpenSSL-devel
+	2.	Install certs to etc/pki/tls/certs and install key to /etc/pki/tls/private
+	3.	Install apr http://jmchung.github.io/blog/2013/09/06/centos-installing-apache-portable-runtime-apr-for-tomcat/
+	4.	Install Tomcat Native Libraries
+	1.	http://tomcat.apache.org/native-doc/
+	5.	Configure httpd proxy and certs
+	1.	Configure SSL.conf
+	2.	/etc/httpd/conf.d/ssl.conf
+    ```
+    <VirtualHost *:443>
+    ServerName=openmbee.com
+    ServerAlias=www.openmbee.com
+    SSLCertificateFile /path/to/file
+    SSLCertificateKeyFile /path/to/file
+    SSLCACertificateFile /path/to/file
+    SSLProxyEngine on
+    SSLProxyVerify none 
+    SSLProxyCheckPeerCN off
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerExpire off
+    ProxyPass / https://localhost:8443/
+    ProxyPassReverse / https://localhost:8443/
+    </VirtualHost>
+    ```
 
+	5.	Configure Server.xml
+
+    ```
+    <Connector port="8080" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11Protocol"
+    connectionTimeout="20000"
+    redirectPort="8443" maxHttpHeaderSize="32768"
+    proxyName="www.openmbee.com"
+    proxyPort="80"
+     />
+    <!-- A "Connector" using the shared thread pool-->
+    <!--
+    <Connector executor="tomcatThreadPool" 
+     port="8080" URIEncoding="UTF-8" protocol="HTTP/1.1"
+     connectionTimeout="20000"
+     redirectPort="8443" maxHttpHeaderSize="32768" />
+    -->
+    <!-- Define a SSL HTTP/1.1 Connector on port 8443
+         This connector uses the JSSE configuration, when using APR, the
+         connector should be using the OpenSSL style configuration
+         described in the APR documentation -->
+ 
+    <Connector port="8443" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11AprProtocol" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               clientAuth="false" maxHttpHeaderSize="32768"
+                SSLCertificateFile="/etc/pki/tls/certs/openmbee.crt"
+                SSLCertificateKeyFile="/etc/pki/tls/private/openmbee.key"
+                SSLCertificateChainFile="/etc/pki/tls/certs/openmbee.ca-bundle"
+                SSLVerifyClient="optional" SSLProtocol="all"
+                proxyName="www.openmbee.com"
+                proxyPort="443"
+ />
+ 
+ 
+    <!-- Define an AJP 1.3 Connector on port 8009 -->
+    <Connector port="8009" URIEncoding="UTF-8" protocol="AJP/1.3" redirectPort="8443" />
+```
 ### MDK
 1. TBD
 2. there’s a class called qvt script runner or something similar, if you delete that and delete any broken calls to it it should compile with md without nick’s stuff
