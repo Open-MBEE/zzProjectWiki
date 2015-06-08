@@ -320,6 +320,34 @@ sudo chmod -R +r /opt/eclipse
 5. download these repos using eclipse
 6. Allow maven dependencies to update (may take some time)
 
+#### Get repos without Eclipse and dependencies
+1. Make a directory for repo 
+
+ ```mkdir /home/${user.name}/open-mbee-repo``` 
+
+2. Change to directory 
+
+  ```cd /home/${user.name}/open-mbee-repo```
+
+3. Run 
+
+  ```git clone https://github.com/Open-MBEE/EMS-Repo.git```
+ 
+ ** Repeat for EMS-Share, EMS-Webapp, util, bae, sysml, and dockbook **
+
+4. Once all repositories have been downloaded, run 
+
+  ```mvn validate```
+ 
+5. If the maven source plugin has not been downloaded, run:
+
+  ```sudo yum install maven-install-plugin.noarch```
+
+6. Change into the directory of each of the repositories, run:
+
+  ```yum clean install```
+
+
 #### Build .Jar files
 1. For each repo in order util/sysml/docbook:
  1. Open Terminal
@@ -330,8 +358,9 @@ sudo chmod -R +r /opt/eclipse
      ``` 
     mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
-    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.1```
-    
+    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.5```
+          Repo names: ```mbee_util```, ```sysml```, ```bae```
+
  5. Repeat for other repos
 2. Next build BAE
  1. Open Eclipse
