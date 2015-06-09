@@ -516,6 +516,13 @@ Follow these instructions to update or install EMS from source
     ```
 
 4. If you see a section called ```### Solr Settings ###``` comment each setting out by placing a ```#``` in front of each line
+5. Configure Outbound email http://docs.alfresco.com/community/concepts/email-outboundsmtp-props.html
+6. Edit $TOMCAT_HOME/webapps/ROOT/index.jsp to redirect users to MMS App
+    Replace contents of file with:
+    ```
+    <%
+    response.sendRedirect("/alfresco/mmsapp/mms.html");
+    %>
 
 ### SSL
 	1.	Install OpenSSL and OpenSSL-devel
@@ -579,6 +586,9 @@ Follow these instructions to update or install EMS from source
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector port="8009" URIEncoding="UTF-8" protocol="AJP/1.3" redirectPort="8443" />
 ```
+
+1. 
+
 ### MDK
 1. TBD
 2. there’s a class called qvt script runner or something similar, if you delete that and delete any broken calls to it it should compile with md without nick’s stuff
