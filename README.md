@@ -504,6 +504,8 @@ Follow these instructions to update or install EMS from source
  3. 
 
 ### Server Configuration
+
+#### ALfresco Global Properties Fixes
 1. Modify the global properties file to support lucine searching
 2. ```sudo vim ${tomcat.home}/shared/classes/alfresco-global.properties```
 3. Edit the file to include
@@ -523,6 +525,23 @@ Follow these instructions to update or install EMS from source
     <%
     response.sendRedirect("/alfresco/mmsapp/mms.html");
     %>
+    ```
+    
+#### Configuring Account for Package as a Site capability]
+
+From ISSUE #8 on EMS-Repo:
+So in order to fix this you need to add a user account that EMS can use to create the site in $tomcat_home/webapps/alfresco/WEB-INF/classes/alfresco/module/view-repo/context/service-context.xml
+
+    ```
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    	<property name="staticMethod" value="gov.nasa.jpl.view_repo.webscripts.util.ShareUtils.setUsername" />
+    	<property name="arguments" value="{admin.userID}"/>
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="gov.nasa.jpl.view_repo.webscripts.util.ShareUtils.setPassword" />
+    	<property name="arguments" value="{admin.pw}"/>
+    </bean>
+    ```
 
 ### SSL
 	1.	Install OpenSSL and OpenSSL-devel
