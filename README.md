@@ -1,14 +1,11 @@
-#Warning these instructions are only tested for EMS Version 2.0 (Commits prior to May 4th 2015)
+#These instructions are now up to date for EMS Version 2.1 (Commits afrer to May 4th 2015)
 
 # Install OpenMBEE Environment from Source
 
-1. Test was conducted on VMWare esXI 5.5
- 1. CPUS = 1 Core
- 1. RAM = 2GB
-HDD = 100GB
+1. Test was conducted on VMWare esXI 5.0 (CentOS 6) and Amazon AWS (CentOS 7)
 HostName = openmbee.db8tnet
 
-## Procedure
+## Optional Setup Procedure
 
 ### Install OS
 1. Download CentOS 6.6 for x64
@@ -56,21 +53,27 @@ HostName = openmbee.db8tnet
  4. Add the following
  
     ```
+    DEVICE=eth0
+    HWADDR=<mac number>
+    TYPE=Ethernet
+    NM_CONTROLLED=no
+    ONBOOT=yes
     IPADDR=<your ip>
     NETMASK=255.255.255.0
     ```
- 5. Configure Default gateway
+    
+ 6. Configure Default gateway and hostname
+ 
     ```
     vim /etc/sysconfig/network
     ```
     
- 6. Run DHClient
+ 6. OPTIONAL: Configure local dns lookups if desired ```sudo vim /etc/resolv.conf```
+ 
     ```
-    sudo dhclient
+    search <yourdomain>
+    nameserver <your dns/dhcp server>
     ```
-    
- 7. Restart machine
-1. in desktop click on network manager to ensure the connection is active
 
 #### Enable SSH
 2. Open terminal
@@ -82,7 +85,8 @@ HostName = openmbee.db8tnet
     sudo shutdown -r now
     ```
 
-#### Setup VNC (OPTIONAL)
+
+#### Setup VNC (Optional only if you plan to use eclipse)
 1. Install TigerVNC
     ```
     sudo yum install vnc-server
@@ -101,11 +105,12 @@ HostName = openmbee.db8tnet
 5. Test using your favorite VNC viewer (RealVNC, chicken of the VNC etc)
 
 ### Install Development Environment
-#### Install Support Pgms
-1. These may already be installed depending on the version and deployment of CentOS used
-2. Install vim (or your favorite text editor) ```sudo yum install vim```
-3. Install wget ```sudo yum install wget```
-4. 
+
+
+#### Install Support tools
+
+1. Install vim (or your favorite text editor) ```sudo yum install vim```
+2. Install wget ```sudo yum install wget```
 
 #### Install JAVA
 1. Download and Install
@@ -120,7 +125,7 @@ HostName = openmbee.db8tnet
     ```$ sudo vim /etc/profile.d/java.sh```
  1. Insert the following:
     ```
-    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
+    export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk
     export PATH=$PATH:$JAVA_HOME
     ```
 
@@ -168,7 +173,7 @@ HostName = openmbee.db8tnet
     export PATH=${ANT_HOME}/bin:${JAVA_HOME}/bin:${PATH}.
     ```
 
-#### Install Eclipse (Optional only if you prefer a gui git/coding interface)
+#### Install Eclipse (Optional only if you prefer a gui git/coding environment)
 1. Download Installer
 
     ```
@@ -294,16 +299,67 @@ sudo chmod -R +r /opt/eclipse
     -A INPUT -p tcp -m tcp —dport 8080 -j ACCEPT
     -A INPUT -p tcp -m tcp —dport 8443 -j ACCEPT
     ```
- 2 . Other useful ports
- 
-     HTTP 80 and 443 (redirect these to /share/page)
-     Postgresql 5432
-     
-10. Test using internal and external browsers!
+11. Test using internal and external browsers!
+
+### Configure httpd
+1. Install httpd ``sudo yum install httpd```
+2. Open httpd ports
+    ```
+    -A INPUT -p tcp -m tcp —dport 80 -j ACCEPT
+    -A INPUT -p tcp -m tcp —dport 443 -j ACCEPT
+    ```
+3. Configure httpd for virtual host and enable mod_proxy services ```sudo vim /etc/httpd/conf/httpd.conf```
+4. Append to the end of the file:
+
+    ```
+    #
+    # Use name-based virtual hosting
+    #
+    NameVirtualHost *:80
+    #
+    # NOTE: NameVirtualHost cannot be used without a port specifier
+    # (e.g. :80) if mod_ssl is being used, due to the nature of the
+    # SSL protocol.
+    #
+    LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+    ```
+5. Clean up apache and configure the virtual host
+
+    ```
+    cd /etc/httpd/conf.d/
+    sudo rm welcome.conf
+    sudo vim tomcat.conf
+    ```
+6. Insert into tomcat.conf
+
+    ```
+    <VirtualHost *:80>
+       ServerName <yourdomain openmbee.domain>
+       ServerAlias <yourfulldomain i.e. www.openmbee.com>
+
+       ProxyRequests Off
+       ProxyPreserveHost On
+
+       ErrorLog /var/log/httpd/tomcat.error.log
+       CustomLog /var/log/httpd/tomcat.log combined
+
+       <Proxy *>
+               Order deny,allow
+               Allow from all
+       </Proxy>
+
+       ProxyPass / ajp://localhost:8009/
+       ProxyPassReverse / ajp://localhost:8009/
+    </VirtualHost>
+    ```
+7. Restart httpd ```sudo service httpd restart```
+8. Test using browser
 
 ### Build OpenMBEE Source Code
+Follow these instructions to update or install EMS from source
 
 #### Get Repositories
+##### Gui Instructions
 1. Open GUI interface
 2. open eclipse in git perspective
 3. open browser and get git links from (http://openmbee.org)
@@ -316,56 +372,48 @@ sudo chmod -R +r /opt/eclipse
  3. bae : https://github.com/Open-MBEE/bae.git
  4. sysml : https://github.com/Open-MBEE/sysml.git
  5. docbook : https://github.com/Open-MBEE/docbook.git
-4. uncheck build automatically
+5. uncheck build automatically
 5. download these repos using eclipse
+6. make sure to checkout the '2.1' Branch
 6. Allow maven dependencies to update (may take some time)
+##### Command line only instructions
+1. ```cd /home/${user.name}```
+2. ```mkdir ./git```
+3. ```cd ${user.home}/git```
+4. Clone repos
+
+    ```
+    git clone https://${git.username}@github.com/Open-MBEE/util.git
+    git clone https://${git.username}@github.com/Open-MBEE/sysml.git
+    git clone https://${git.username}@github.com/Open-MBEE/bae.git
+    git clone https://${git.username}@github.com/Open-MBEE/docbook.git
+    git clone https://${git.username}@github.com/Open-MBEE/docbookgen.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Repo.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Share.git
+    git clone https://${git.username}@github.com/Open-MBEE/EMS-Webapp.git
+    ```
+    
+#### Stop Alfresco
+1. If you have an alfresco instance running you can stop it now
+2. ```cd /opt/alfresco-{alf.version}```
+3. ```sudo ./alfresco.sh stop```
+4. If you installed alfresco as a service and dont have port 8005 open internally you may get an error message and fail to stop the server if you attempt ```sudo service alfresco stop```
 
 #### Build .Jar files
-1. For each repo in order util/sysml/docbook:
- 1. Open Terminal
- 2. Change to git directory ```cd /home/${user.name}``` changing ```${user.name}``` to your username
- 3. Build the JAR ```mvn package```
+1. For each repo *in order* mbee_util/sysml/docbook/bae:
+ 1. Open Terminal (gui only)
+ 2. Change to git directory ```cd /home/${user.name}/git/${repo.name}``` changing ```${user.name}``` to your username
+ 3. Ensure you are on the correct branch (2.1) ```git status``` if not ```git checkout 2.1```
+ 4. Build the JAR ```mvn package```
  4. Next, add the newly created JAR to your local maven repo replacing ```${repo.name}``` with the repository you are working with
  
      ``` 
     mvn install:install-file -Dfile=target/${repo.name}-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.${repo.name} -DartifactId=${repo.name} -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
     ```
-    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.1```
+    Note: For docbook chagne ```2.1.0-SNAPSHOT``` to ```0.0.5```
+    Note: For util use ```mbee_util``` for Dfile and DartifactId but only ```util``` for DgroupId
     
- 5. Repeat for other repos
-2. Next build BAE
- 1. Open Eclipse
- 2. In JAVA Perspective open the BAE project
- 3. Open pom.xml
- 4. After Line 20 ```<repositories>``` delete all content within the tag
- 5. Insert the following between the newly empty tags
-     ```
-     <repository>
-      <id>local-repository</id>
-      <name>local</name>
-      <url>file://${user.home}/.m2/repository</url>
-      </repository>
-      ```
-      This tells maven to look only at your local repository rather than the JPL internal maven repo
-  6. Look for the ```<dependencies>``` tag
-  7. Insert the following new dependency
-  
-    ```
-      <dependency>
-    	<groupID>junit</groupID>
-    	<artifactID>junit</artifactID>
-    	<version>4.12</version>
-    </dependency>
-    ```
- 
-  7. Save and close the file
-  7. Open the terminal again
-  8. Change directories to the BAE repository ```${user.home}/git/bae```
-  9. Build the JAR ```mvn package```
-  10. Install the JAR to the local repository
-    ```
-    mvn install:install-file -Dfile=target/bae-2.1.0-SNAPSHOT.jar -DgroupId=gov.nasa.jpl.mbee.bae -DartifactId=bae -Dversion=2.1.0-SNAPSHOT -Dpackaging=jar
-    ```
+ 5. Repeat for other repos before building bae
     
 
 #### Build EMS
@@ -379,7 +427,7 @@ sudo chmod -R +r /opt/eclipse
 
 ##### Build the EMS-Repo AMP
 1. In terminal navigate to EMS-Repo in git directory
-2. Build the amp ```mvn package -P mbee-dev```
+2. Build the amp ```mvn package -P mbee-dev -Dmaven.test.skip=true```
 3. If you want to run a local instance in an embedded jetty container (Repo on port  localhost:8080)
 
     ```
@@ -400,43 +448,167 @@ sudo chmod -R +r /opt/eclipse
 1. You must first have installed all the dependencies in the EMS-Webapp Applications development environment above
 2. Navigate to the correct directory ```cd ${git.dir}/EMS-Webapp```
 3. Install additional dependencies ```npm install``` which will look at the directory's package.json file
-4. 
-2. Test locally Grunt server:localhost (port 9000)
+4. Execute the build ```grunt```
+5. If you get an error like this:
+    ```
+    Unable to find a suitable version for angular, please choose one:
+    1) angular#1.2.28 which resolved to 1.2.28 and is required by angular-animate#1.2.28 
+    2) angular#~1.2.x which resolved to 1.2.28 and is required by angular-ui-sortable#0.12.11 
+    3) angular#~1.3.8 which resolved to 1.3.15 and is required by mms 
+    4) angular#>= 1.0.8 which resolved to 1.3.15 and is required by angular-ui-router#0.2.14 
+    5) angular#>=1 which resolved to 1.3.15 and is required by angular-ui-bootstrap-bower#0.11.2 
+    6) angular#>= 1.2.0 which resolved to 1.3.15 and is required by angular-ui-tree#2.1.5 
+    7) angular#>=1.2.1 which resolved to 1.3.15 and is required by angular-growl-v2#0.6.1 
+    8) angular#>=1.2.x which resolved to 1.3.15 and is required by angular-ui-sortable#0.13.3 
+    9) angular#1.3.15 which resolved to 1.3.15 and is required by angular-animate#1.3.15Prefix the choice with ! to persist it to bower.json
+    ```
+    Select an option that resolves to 1.3.15 (3-9)
+
+6. If you want to test locally Grunt server:localhost (port 9000)
 
 #### Deploying to production Alfresco
 
 1. Uninstall any existing, Navigate to /{alfresco.dir}/bin/
- 2. cd $TOMCAT/webapps
+ 2. cd /opt/alfresco-${alfresco.version}
 
     ```
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar uninstall mms-repo alfresco.war
-    java -jar $ALFRESCO/bin/alfresco-mmt.jar uninstall mms-share share.war
+    sudo java -jar ./bin/alfresco-mmt.jar uninstall mms-repo ./tomcat/webapps/alfresco.war
+    sudo java -jar ./bin/alfresco-mmt.jar uninstall mms-share ./tomcat/webapps/share.war
     ```
 3. Install the amps
  4. cd /opt/alfresco-${alfresco.version}
     ```
-    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir} /EMS-Repo/target/mms-repo.amp ./tomcat/webapps/alfresco.war -force
-    sudo java -jar $ALFRESCO/bin/alfresco-mmt.jar install $PATH_TO_AMP/mms-share.amp $TOMCAT/share.war -force
+    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir}/EMS-Repo/target/mms-repo.amp ./tomcat/webapps/alfresco.war -force
+    sudo java -jar ./bin/alfresco-mmt.jar install ${git.dir}/EMS-Share/target/mms-share.amp ./tomcat/webapps/share.war -force
     ```
-4. Explode the WAR
+4. Explode the Alfresco WAR
  4. ```cd $TOMCAT/webapps```
  5. ```sudo rm -rf alfresco```
  6. ```sudo mkdir alfresco```
  7. ```cd ./alfresco```
  8. ```sudo jar xvf ../alfresco.war```
-5. Unzip EVM ```unzip evm.zip```
- 1. ```cp ${git.dir}/EMS-Webapp/build mmsapp```
+5. Explode the Share WAR
+ 4. ```cd $TOMCAT/webapps```
+ 5. ```sudo rm -rf share```
+ 6. ```sudo mkdir share```
+ 7. ```cd ./share```
+ 8. ```sudo jar xvf ../share.war```
+5. Copy EVM ```cd ../alfresco```
+ 1. ```cp -r ${git.dir}/EMS-Webapp/build mmsapp```
 2. ```cd $TOMCAT/webapps```
 3. ```chown -R tomcat:tomcat webapps```
+6. Remove Extra Solr files
+ 1. ```sudo rm -rf ${tomcat.dir}/conf/Catalina/localhost/solr.xml```
+ 2. ```sudo rm -rf ${tomcat.dir}/work```
+7. Copy Docbookgen
+ 1. ```sudo cp -r {$git.dir}/docbookgen /opt/docbookgen```
+ 2. ```cd docbookgen```
+ 3. 
 
 ### Server Configuration
 
-#### Basics
-1. Check your ports depending on your configuration you might want (80,443,
-2. Ensure alfresco and httpd are running at startup ```sudo chkconfig alfresco on```; ```sudo chkconfig httpd on```
-3. 
+#### ALfresco Global Properties Fixes
+1. Modify the global properties file to support lucine searching
+2. ```sudo vim ${tomcat.home}/shared/classes/alfresco-global.properties```
+3. Edit the file to include
 
+    ```
+    ### Lucene Settings ###
+    index.subsystem.name=lucene
+    index.recovery.mode = AUTO
+    index.tracking.disableInTransactionIndexing = false
+    ```
 
+4. If you see a section called ```### Solr Settings ###``` comment each setting out by placing a ```#``` in front of each line
+5. Configure Outbound email http://docs.alfresco.com/community/concepts/email-outboundsmtp-props.html
+6. Edit $TOMCAT_HOME/webapps/ROOT/index.jsp to redirect users to MMS App
+    Replace contents of file with:
+    ```
+    <%
+    response.sendRedirect("/alfresco/mmsapp/mms.html");
+    %>
+    ```
+    
+#### Configuring Account for Package as a Site capability]
+
+From ISSUE #8 on EMS-Repo:
+So in order to fix this you need to add a user account that EMS can use to create the site in $tomcat_home/webapps/alfresco/WEB-INF/classes/alfresco/module/view-repo/context/service-context.xml
+
+    ```
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    	<property name="staticMethod" value="gov.nasa.jpl.view_repo.webscripts.util.ShareUtils.setUsername" />
+    	<property name="arguments" value="{admin.userID}"/>
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="gov.nasa.jpl.view_repo.webscripts.util.ShareUtils.setPassword" />
+    	<property name="arguments" value="{admin.pw}"/>
+    </bean>
+    ```
+
+### SSL
+	1.	Install OpenSSL and OpenSSL-devel
+	2.	Install certs to etc/pki/tls/certs and install key to /etc/pki/tls/private
+	3.	Install apr http://jmchung.github.io/blog/2013/09/06/centos-installing-apache-portable-runtime-apr-for-tomcat/
+	4.	Install Tomcat Native Libraries
+	1.	http://tomcat.apache.org/native-doc/
+	5.	Configure httpd proxy and certs
+	1.	Configure SSL.conf
+	2.	/etc/httpd/conf.d/ssl.conf
+    ```
+    <VirtualHost *:443>
+    ServerName=openmbee.com
+    ServerAlias=www.openmbee.com
+    SSLCertificateFile /path/to/file
+    SSLCertificateKeyFile /path/to/file
+    SSLCACertificateFile /path/to/file
+    SSLProxyEngine on
+    SSLProxyVerify none 
+    SSLProxyCheckPeerCN off
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerExpire off
+    ProxyPass / https://localhost:8443/
+    ProxyPassReverse / https://localhost:8443/
+    </VirtualHost>
+    ```
+
+	5.	Configure Server.xml
+
+    ```
+    <Connector port="8080" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11Protocol"
+    connectionTimeout="20000"
+    redirectPort="8443" maxHttpHeaderSize="32768"
+    proxyName="www.openmbee.com"
+    proxyPort="80"
+     />
+    <!-- A "Connector" using the shared thread pool-->
+    <!--
+    <Connector executor="tomcatThreadPool" 
+     port="8080" URIEncoding="UTF-8" protocol="HTTP/1.1"
+     connectionTimeout="20000"
+     redirectPort="8443" maxHttpHeaderSize="32768" />
+    -->
+    <!-- Define a SSL HTTP/1.1 Connector on port 8443
+         This connector uses the JSSE configuration, when using APR, the
+         connector should be using the OpenSSL style configuration
+         described in the APR documentation -->
+ 
+    <Connector port="8443" URIEncoding="UTF-8" protocol="org.apache.coyote.http11.Http11AprProtocol" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               clientAuth="false" maxHttpHeaderSize="32768"
+                SSLCertificateFile="/etc/pki/tls/certs/openmbee.crt"
+                SSLCertificateKeyFile="/etc/pki/tls/private/openmbee.key"
+                SSLCertificateChainFile="/etc/pki/tls/certs/openmbee.ca-bundle"
+                SSLVerifyClient="optional" SSLProtocol="all"
+                proxyName="www.openmbee.com"
+                proxyPort="443"
+ />
+ 
+ 
+    <!-- Define an AJP 1.3 Connector on port 8009 -->
+    <Connector port="8009" URIEncoding="UTF-8" protocol="AJP/1.3" redirectPort="8443" />
+```
+
+1. 
 
 ### MDK
 1. TBD
