@@ -425,6 +425,10 @@ Follow these instructions to update or install EMS from source
     If you are deploying locally you can skip the "mvn package step" and go straight to integration-test
 2. To deploy to a production environment after building see the next section
 
+##### NOTE: 
+If you experience failures with dependencies, go back into Eclipse and update the maven projects
+
+
 ##### Build the EMS-Repo AMP
 1. In terminal navigate to EMS-Repo in git directory
 2. Build the amp ```mvn package -P mbee-dev -Dmaven.test.skip=true```
