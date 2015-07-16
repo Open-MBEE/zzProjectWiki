@@ -383,14 +383,14 @@ Follow these instructions to update or install EMS from source
 4. Clone repos
 
     ```
-    git clone https://${git.username}@github.com/Open-MBEE/util.git
-    git clone https://${git.username}@github.com/Open-MBEE/sysml.git
-    git clone https://${git.username}@github.com/Open-MBEE/bae.git
-    git clone https://${git.username}@github.com/Open-MBEE/docbook.git
-    git clone https://${git.username}@github.com/Open-MBEE/docbookgen.git
-    git clone https://${git.username}@github.com/Open-MBEE/EMS-Repo.git
-    git clone https://${git.username}@github.com/Open-MBEE/EMS-Share.git
-    git clone https://${git.username}@github.com/Open-MBEE/EMS-Webapp.git
+    git clone https://git@github.com/Open-MBEE/util.git
+    git clone https://git@github.com/Open-MBEE/sysml.git
+    git clone https://git@github.com/Open-MBEE/bae.git
+    git clone https://git@github.com/Open-MBEE/docbook.git
+    git clone https://git@github.com/Open-MBEE/docbookgen.git
+    git clone https://git@github.com/Open-MBEE/EMS-Repo.git
+    git clone https://git@github.com/Open-MBEE/EMS-Share.git
+    git clone https://git@github.com/Open-MBEE/EMS-Webapp.git
     ```
     
 #### Stop Alfresco
