@@ -432,12 +432,12 @@ Follow these instructions to update or install EMS from source
     ```
     mvn package -P mbee-dev -Dmaven.test.skip=true
     ```
-
 ###### ALTERNATIVE: If you want to run a local instance in an embedded jetty container (Repo on port  localhost:8080)
 
     ```
     mvn integration-test -Pamp-to-war -Dmaven.test.skip=true -P mbee-dev
     ```
+    
 3. if you want to clean a failed attempt ```mvn clean -Ppurge```
 
 ##### Build the EMS-Share AMP
