@@ -427,21 +427,32 @@ Follow these instructions to update or install EMS from source
 
 ##### Build the EMS-Repo AMP
 1. In terminal navigate to EMS-Repo in git directory
-2. Build the amp ```mvn package -P mbee-dev -Dmaven.test.skip=true```
-3. If you want to run a local instance in an embedded jetty container (Repo on port  localhost:8080)
+2. Build the amp use ```-P mbee-dev``` if you installed to your local mvn repo else if you configured your pom for local files ```-P mms-dev```
 
     ```
-    mvn integration-test -Pamp-to-war -Dmaven.test.skip=true -P mms-dev
+    mvn package -P mbee-dev -Dmaven.test.skip=true
     ```
-4. if you want to clean a failed attempt ```mvn clean -Ppurge```
+
+3. if you want to clean a failed attempt ```mvn clean -Ppurge```
+
+###### ALTERNATIVE: If you want to run a local instance in an embedded jetty container (Repo on port  localhost:8080)
+
+    ```
+    mvn integration-test -Pamp-to-war -Dmaven.test.skip=true -P mbee-dev
+    ```
+
 
 ##### Build the EMS-Share AMP
 1. In terminal navigate to EMS-Share repository
-2. Build the AMP ```mvn package -P mbee-dev```
-3. If you want to run a local instance in an embedded jetty container (Share on port  localhost:8081)
+2. Build the AMP 
+
+   ```
+   mvn package -P mbee-dev
+   ```
+###### ALTERNATIVE: If you want to run a local instance in an embedded jetty container (Share on port  localhost:8081)
 
     ```
-    mvn integration-test -Pamp-to-war -Dmaven.test.skip=true -P mms-dev
+    mvn integration-test -Pamp-to-war -Dmaven.test.skip=true -P mbee-dev
     ```
 
 ##### Build the EVM.zip
