@@ -301,6 +301,25 @@ sudo chmod -R +r /opt/eclipse
     ```
 11. Test using internal and external browsers!
 
+#### Add Alfresco and Tomcat to path
+Alfresco
+
+    sudo vi /etc/profile.d/alfresco.sh
+
+Copy paste
+
+    export ALFRESCO=/opt/alfresco{Version}
+    export PATH=$PATH:$ALFRESCO
+
+Tomcat
+
+    sudo vi /etc/profile.d/tomcat.sh
+
+Copy Paste
+
+    export TOMCAT=/opt/alfresco{VERSION}/tomcat
+    export PATH=$PATH:$TOMCAT
+
 ### Configure httpd
 1. Install httpd ``sudo yum install httpd```
 2. Open httpd ports
@@ -424,6 +443,10 @@ Follow these instructions to update or install EMS from source
 1. Each must first be built and deployed on a local environment before testing locally
     If you are deploying locally you can skip the "mvn package step" and go straight to integration-test
 2. To deploy to a production environment after building see the next section
+
+##### NOTE: 
+If you experience failures with dependencies, go back into Eclipse and update the maven projects
+
 
 ##### Build the EMS-Repo AMP
 1. In terminal navigate to EMS-Repo in git directory
