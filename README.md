@@ -301,6 +301,25 @@ sudo chmod -R +r /opt/eclipse
     ```
 11. Test using internal and external browsers!
 
+#### Add Alfresco and Tomcat to path
+Alfresco
+
+    sudo vi /etc/profile.d/alfresco.sh
+
+Copy paste
+
+    export ALFRESCO=/opt/alfresco{Version}
+    export PATH=$PATH:$ALFRESCO
+
+Tomcat
+
+    sudo vi /etc/profile.d/tomcat.sh
+
+Copy Paste
+
+    export TOMCAT=/opt/alfresco{VERSION}/tomcat
+    export PATH=$PATH:$TOMCAT
+
 ### Configure httpd
 1. Install httpd ``sudo yum install httpd```
 2. Open httpd ports
