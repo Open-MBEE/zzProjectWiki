@@ -1,4 +1,6 @@
-#These instructions are now up to date for EMS Version 2.1 (Commits afrer to May 4th 2015)
+#These instructions are only up to date for EMS branches labeled 2.1
+
+##The community recommends using the 2.2 branches substituting where possible 2.2 for 2.1 and using missing maven resources (klang;kparser) from the mvn-repo repository
 
 # Install OpenMBEE Environment from Source
 
